@@ -1,4 +1,4 @@
-from bs4 import BeautifulSoup as bs
+from bs4 import BeautifulSoup
 import pandas as pd
 import numpy as np
 import re
@@ -16,3 +16,16 @@ def parse_tags(tag_string):
     tag_list = [tag[1:-1] for tag in tag_list]
 
     return set(tag)
+
+def parse_code_blocks(raw_text):
+    '''
+    Takes raw HTML text and splits into two strings of all words contained
+    inside code blocks and all words outside of code blocks
+
+    Input: Raw HTML string
+    Output: Non-code string, Code string
+    '''
+
+    soup = BeautifulSoup(raw_text)
+
+    pass
