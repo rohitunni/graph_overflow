@@ -2,11 +2,13 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import numpy as np
 import re
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 
 class Preprocessor(object):
 
-    def __init__(self):
+    def __init__(self, del_scores = False):
+        self.del_scores = del_scores
         pass
 
     def parse_tags(self, tag_string):
@@ -59,7 +61,6 @@ class Preprocessor(object):
         #break the raw tag strings into sets of tags
         empty_cols = np.zeros((num_rows, 4))
         X = np.concatenate((X, empty_cols), axis = 1)
-        print X.shape
 
         for row in X:
             row[6] = self.parse_tags(row[6])
@@ -67,6 +68,21 @@ class Preprocessor(object):
             row[8] = self.parse_code_blocks(row[2])['code']
             row[9] = self.parse_code_blocks(row[4])['no code']
             row[10] = self.parse_code_blocks(row[4])['code']
+        X = np.delete(X, 4, 1)
+        X = np.delete(X, 2, 1)
+        if self.del_scores:
+            X = np.delete(X, 3, 1)
+            X = np.delete(X, 2, 1)
+
+        non_code_texts = np.concatenate((X[:,3], X[:, 5]), axis = 0)
+        code_texts = np.concatenate((X[:,4], X[:,6]))
+
+        tfidf = TfidfVectorizer()
+        non_code_matrix = tfidf.fit_transform(non_code_texts)
+
+        
+
+        print non_code_matrix.shape
 
 
 
