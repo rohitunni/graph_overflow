@@ -3,7 +3,8 @@ import pandas as pd
 import numpy as np
 import re
 from sklearn.feature_extraction.text import TfidfVectorizer
-
+from code_tokenizer import code_tokenizer
+from sklearn.decomposition import NMF
 
 class Preprocessor(object):
 
@@ -77,10 +78,10 @@ class Preprocessor(object):
         non_code_texts = np.concatenate((X[:,3], X[:, 5]), axis = 0)
         code_texts = np.concatenate((X[:,4], X[:,6]))
 
-        tfidf = TfidfVectorizer()
-        non_code_matrix = tfidf.fit_transform(non_code_texts)
+        tfidf_ncode = TfidfVectorizer()
+        non_code_matrix = tfidf_ncode.fit_transform(non_code_texts)
 
-        
+
 
         print non_code_matrix.shape
 
