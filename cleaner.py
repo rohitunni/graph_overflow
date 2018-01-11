@@ -1,6 +1,10 @@
 from preprocessing import Preprocessor
 import pandas as pd
 import numpy as np
+import boto
+
+
+
 
 df = pd.read_csv('stackodata.csv')
 
