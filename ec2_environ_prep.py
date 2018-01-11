@@ -38,6 +38,5 @@ if __name__ == "__main__":
 
     else:
         install_dependancies(py_libraries, aws_=False)
-        git_clone_repo(raw_input("Enter git repo URL: "))
 
     print "\n All set!"
