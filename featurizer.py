@@ -2,13 +2,13 @@ from preprocessing import Preprocessor
 import pandas as pd
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer, TfidfTransformer
-from sklearn.decomposition import NMF
+from sklearn.decomposition import NMF, PCA
 from code_tokenizer import code_tokenizer
 
 
 class Featurizer(object):
 
-    def __init__(self, n_features = 10, start_column = 5):
+    def __init__(self, n_features = 100, start_column = 5):
         self.s = start_column
         self.n_features = n_features
         self.nmf_ncode = None
@@ -21,11 +21,11 @@ class Featurizer(object):
             tfidf = TfidfVectorizer()
         full_matrix = tfidf.fit_transform(X)
 
-        nmf = NMF(n_components = self.n_features)
+        pca = PCA(n_components = self.n_features)
 
-        
 
-        reduced_matrix = nmf.fit_transform(full_matrix)
+
+        reduced_matrix = pca.fit_transform(full_matrix)
 
         return reduced_matrix
 
@@ -39,10 +39,15 @@ class Featurizer(object):
 
         code_matrix = self.make_feature_matrix(code_texts, is_code = True)
 
-        rejoined_ncode = np.concatenate(np.split(non_code_matrix, 2, axis = 0), axis = 1)
+        rejoined_ncode = np.split(non_code_matrix, 2, axis = 0)
 
-        rejoined_code = np.concatenate(np.split(code_matrix, 2, axis = 0), axis = 1)
+        rejoined_code = np.split(code_matrix, 2, axis = 0)
 
-        full_matrix = np.concatenate([rejoined_ncode, rejoined_code], axis = 1)
+        full_matrix = np.concatenate([rejoined_ncode[0].reshape(-1,1),
+                                      rejoined_code[0].reshape(-1,1),
+                                      rejoined_ncode[1].reshape(-1,1),
+                                      rejoined_code[1]].reshape(-1,1), axis = 1)
 
         return full_matrix
+
+        pass
