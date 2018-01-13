@@ -16,16 +16,16 @@ class Featurizer(object):
 
     def make_feature_matrix(self, X, is_code = False):
         if is_code:
-            tfidf = TfidfVectorizer(tokenizer = code_tokenizer)
+            tfidf = TfidfVectorizer(tokenizer = code_tokenizer, stop_words = 'english')
         else:
-            tfidf = TfidfVectorizer()
+            tfidf = TfidfVectorizer(stop_words = 'english')
         full_matrix = tfidf.fit_transform(X)
 
         pca = PCA(n_components = self.n_features)
 
 
 
-        reduced_matrix = pca.fit_transform(full_matrix)
+        reduced_matrix = pca.fit_transform(full_matrix.toarray())
 
         return reduced_matrix
 
