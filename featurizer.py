@@ -13,6 +13,7 @@ class Featurizer(object):
         self.n_features = n_features
         self.nmf_ncode = None
         self.nmf_code = None
+        self.topics = []
 
     def make_feature_matrix(self, X, is_code = False):
         if is_code:
@@ -21,6 +22,8 @@ class Featurizer(object):
         else:
             tfidf = TfidfVectorizer(stop_words = 'english', sublinear_tf=True,
                                     use_idf=True)
+
+        features = tfidf.get_feature_names()
 
         full_matrix = tfidf.fit_transform(X)
 
@@ -33,6 +36,13 @@ class Featurizer(object):
         reduced_matrix = svd.fit_transform(full_matrix.toarray())
 
         print "Finished SVD"
+
+        num_words = 20
+        top_words = []
+        for topic in svd.components_:
+            top_words.append([features[i] for i in topic.argsort()[:-num_words - 1:-1]])
+
+        self.topics.append(top_words)
 
         return reduced_matrix
 
