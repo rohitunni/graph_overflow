@@ -2,6 +2,7 @@ import networkx as nx
 from nxpd import draw
 import numpy as np
 import pandas as pd
+import snap
 from preprocessing import Preprocessor
 from featurizer import Featurizer
 from sklearn.metrics.pairwise import cosine_distances
@@ -13,9 +14,9 @@ class Graph_Overflow(object):
         self.nc = ncode_features
         self.c = code_features
         self.qa = self.nc + self.c
-        self.G = None
         self.distances = []
         self.threshold = threshold
+        self.G = snap.TNGraph.New()
         pass
 
     def get_similarities(self, data):
@@ -34,14 +35,15 @@ class Graph_Overflow(object):
 
 
     def make_digraph(self, data, ipynb = False):
+        for i in range(len(data)):
+            self.G.AddNode(i)
         edge_list = self.get_similarities(data)
-        self.G = nx.DiGraph()
-        self.G.add_weighted_edges_from(edge_list)
+        for edge in edge_list:
+            self.G.AddEdge(edge[0], edge[1])
 
         return self.G
 
     def prune_edges(self, edge_list):
-
 
         pass
 

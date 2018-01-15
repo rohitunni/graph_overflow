@@ -2,13 +2,13 @@ from preprocessing import Preprocessor
 import pandas as pd
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer, TfidfTransformer
-from sklearn.decomposition import NMF, PCA
+from sklearn.decomposition import NMF, PCA, TruncatedSVD
 from code_tokenizer import code_tokenizer
 
 
 class Featurizer(object):
 
-    def __init__(self, n_features = 100, start_column = 5):
+    def __init__(self, n_features = 100, start_column = 7):
         self.s = start_column
         self.n_features = n_features
         self.nmf_ncode = None
@@ -16,16 +16,23 @@ class Featurizer(object):
 
     def make_feature_matrix(self, X, is_code = False):
         if is_code:
-            tfidf = TfidfVectorizer(tokenizer = code_tokenizer, stop_words = 'english')
+            tfidf = TfidfVectorizer(tokenizer = code_tokenizer, stop_words = 'english',
+                                    sublinear_tf=True, use_idf=True)
         else:
-            tfidf = TfidfVectorizer(stop_words = 'english')
+            tfidf = TfidfVectorizer(stop_words = 'english', sublinear_tf=True,
+                                    use_idf=True)
+
         full_matrix = tfidf.fit_transform(X)
 
-        pca = PCA(n_components = self.n_features)
+        print "Made tfidf"
+
+        svd = TruncatedSVD(n_components = self.n_features)
 
 
 
-        reduced_matrix = pca.fit_transform(full_matrix.toarray())
+        reduced_matrix = svd.fit_transform(full_matrix.toarray())
+
+        print "Finished SVD"
 
         return reduced_matrix
 
@@ -49,5 +56,3 @@ class Featurizer(object):
                                       rejoined_code[1]].reshape(-1,1), axis = 1)
 
         return full_matrix
-
-        pass
