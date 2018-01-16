@@ -19,4 +19,4 @@ if __name__ == '__main__':
             for row something.iloc[5] hello \n np.delete(something, something) and \
             pd.DataFrame(something else)'
 
-    print code_tokenizer(t_str)
+    #print code_tokenizer(t_str)

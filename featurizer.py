@@ -1,19 +1,84 @@
-from preprocessing import Preprocessor
 import pandas as pd
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer, TfidfTransformer
 from sklearn.decomposition import NMF, PCA, TruncatedSVD
-from code_tokenizer import code_tokenizer
+from stack_nextchange.code_tokenizer import code_tokenizer
+from nltk.tokenize import RegexpTokenizer
+from stop_words import get_stop_words
+from nltk.stem.porter import PorterStemmer
+from gensim import corpora, models, similarities
+import gensim
 
 
 class Featurizer(object):
 
-    def __init__(self, n_features = 100, start_column = 7):
+    def __init__(self, n_features = 100, start_column = 7, size = 30000):
         self.s = start_column
         self.n_features = n_features
+        self.size = size
         self.nmf_ncode = None
         self.nmf_code = None
         self.topics = []
+        self.dict_nc = None
+        self.dict_c = None
+        self.corp_nc = None
+        self.corp_c = None
+        self.lda_nc = None
+        self.lda_c = None
+
+    def make_lda(self, doc_list, is_code = False):
+        en_stop = get_stop_words('en')
+
+        tokenizer = RegexpTokenizer(r'\w+')
+
+         # Create p_stemmer of class PorterStemmer
+        p_stemmer = PorterStemmer()
+        # create sample documents
+
+        # list for tokenized documents in loop
+        texts = []
+        # loop through document list
+        for i in doc_list:
+            # clean and tokenize document string
+            raw = i.lower()
+            if is_code:
+                tokens = code_tokenizer(raw)
+            else:
+                tokens = tokenizer.tokenize(raw)
+            # remove stop words from tokens
+            stopped_tokens = [i for i in tokens if not i in en_stop]
+            # stem tokens
+            stemmed_tokens = [p_stemmer.stem(i) for i in stopped_tokens]
+            # add tokens to list
+            texts.append(stemmed_tokens)
+
+        print("Finished tokenizing and stemming \n")
+
+        # turn our tokenized documents into a id <-> term dictionary
+        dictionary = corpora.Dictionary(texts)
+        # convert tokenized documents into a document-term matrix
+        corpus = [dictionary.doc2bow(text) for text in texts]
+
+        print("Made corpus\n")
+
+        # generate LDA model in chunks
+        def chunker(seq, size):
+            return (seq[pos:pos + size] for pos in range(0, len(seq), size))
+
+        lda = models.ldamulticore.LdaMulticore(corpus[:self.size], num_topics=50, id2word = dictionary, passes=2)
+
+        print("First {}\n".format(self.size))
+
+        for chunk in chunker(corpus[self.size:], self.size):
+            lda.update(chunk)
+            print("Next {}\n".format(self.size))
+
+        print("Done!")
+
+        return dictionary, corpus, lda
+
+
+
 
     def make_feature_matrix(self, X, is_code = False):
         if is_code:
@@ -23,11 +88,12 @@ class Featurizer(object):
             tfidf = TfidfVectorizer(stop_words = 'english', sublinear_tf=True,
                                     use_idf=True)
 
-        features = tfidf.get_feature_names()
 
         full_matrix = tfidf.fit_transform(X)
 
-        print "Made tfidf"
+        features = tfidf.get_feature_names()
+
+        print("Made tfidf")
 
         svd = TruncatedSVD(n_components = self.n_features)
 
@@ -35,7 +101,7 @@ class Featurizer(object):
 
         reduced_matrix = svd.fit_transform(full_matrix.toarray())
 
-        print "Finished SVD"
+        print ("Finished SVD")
 
         num_words = 20
         top_words = []
@@ -66,3 +132,14 @@ class Featurizer(object):
                                       rejoined_code[1]].reshape(-1,1), axis = 1)
 
         return full_matrix
+
+    def fit_lda(self, X):
+
+        non_code_texts = np.concatenate((X[:,self.s], X[:, self.s+2]), axis = 0)
+        code_texts = np.concatenate((X[:,self.s+1], X[:,self.s+3]), axis = 0)
+
+        #print(type(non_code_texts), len(non_code_texts))
+
+        self.dict_nc, self.corp_nc, self.lda_nc = self.make_lda(non_code_texts, is_code = False)
+
+        self.dict_c, self.corp_c, self.lda_c = self.make_lda(code_texts, is_code = True)

@@ -24,7 +24,7 @@ def set_aws_keys():
     os.system("aws configure")
 
 if __name__ == "__main__":
-    py_libraries = ["pandas", "numpy"]
+    py_libraries = ["pandas", "numpy", 'gensim', 'nltk', 'stop_words']
 
     aws = str(raw_input("Do you need to access AWS services? (y/n)"))
 

@@ -1,17 +1,23 @@
 from featurizer import Featurizer
 import pandas as pd
 import numpy as np
+import pickle
 
 df = pd.read_csv('stack_data_cleaned.csv', na_filter=False)
 
 f = Featurizer(n_features = 100, start_column = 7)
 
-matrix_data = f.fit_transform(df.values)
+f.fit_lda(df.values)
 
-non_code_topics = f.topics[0]
+f.lda_c.save('lda_code')
+f.lda_nc.save('lda_noncode')
 
-code_topics = f.topics[1]
+ncode_corp_dict = [f.corp_nc, f.dict_nc]
 
-np.savetxt('svd100.csv', matrix_data)
+code_corp_dict = [f.corp_c, f.dict_c]
 
-np.savez('latent_features', non_code_topics, code_topics)
+with open('ncode_corp_dict.pkl', 'wb') as fnc:
+    pickle.dump(ncode_corp_dict, fnc)
+
+with open('code_corp_dict.pkl', 'wb') as fc:
+    pickle.dump(code_corp_dict, fc)
