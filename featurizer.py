@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer, TfidfTransformer
 from sklearn.decomposition import NMF, PCA, TruncatedSVD
-from stack_nextchange.code_tokenizer import code_tokenizer
+from code_tokenizer import code_tokenizer
 from nltk.tokenize import RegexpTokenizer
 from stop_words import get_stop_words
 from nltk.stem.porter import PorterStemmer
@@ -38,9 +38,9 @@ class Featurizer(object):
         # list for tokenized documents in loop
         texts = []
         # loop through document list
-        for i in doc_list:
+        for i, doc in enumerate(doc_list):
             # clean and tokenize document string
-            raw = i.lower()
+            raw = doc.lower()
             if is_code:
                 tokens = code_tokenizer(raw)
             else:
@@ -51,6 +51,8 @@ class Featurizer(object):
             stemmed_tokens = [p_stemmer.stem(i) for i in stopped_tokens]
             # add tokens to list
             texts.append(stemmed_tokens)
+            if i % 100000 == 0:
+                print(i)
 
         print("Finished tokenizing and stemming \n")
 
