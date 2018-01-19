@@ -12,17 +12,17 @@ lda_c = models.ldamulticore.LdaMulticore.load('lda_code')
 
 print "Loaded LDA models! :)"
 
-with open('ncode_question_corp.json', 'rb') as fa:
+with open('nc_question_corp.json', 'rb') as fa:
     nc_question = json.load(fa)
 
-with open('ncode_question_corp.json', 'rb') as fa:
-    nc_question = json.load(fa)
+with open('nc_answer_corp.json', 'rb') as fb:
+    nc_answer = json.load(fb)
 
-with open('ncode_question_corp.json', 'rb') as fa:
-    nc_question = json.load(fa)
+with open('c_question_corp.json', 'rb') as fc:
+    c_question = json.load(fc)
 
-with open('ncode_question_corp.json', 'rb') as fa:
-    nc_question = json.load(fa)
+with open('c_answer_corp.json', 'rb') as fd:
+    c_answer = json.load(fd)
 
 print "Loaded jsons! :)"
 

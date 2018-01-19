@@ -26,14 +26,11 @@ class QA_Graph(object):
     def make_graph(self, lda_nc, lda_c, notif_num = 20000, start = 0, stop = 500000):
         print "Starting to make indexes"
 
-        index_nc = similarities.docsim.Similarity('tmp/nc_index', lda_nc[self.nc_question],
-                                                   chunksize=512,
-                                                   num_features=50,
-                                                   num_best = self.num_edges)
-        index_c = similarities.docsim.Similarity('tmp/c_index', lda_c[self.c_question],
-                                                  chunksize=512,
-                                                  num_features=50,
-                                                  num_best = self.num_edges)
+        index_nc = similarities.docsim.MatrixSimilarity(lda_nc[self.nc_question],
+                                                        num_best = self.num_edges, num_features = 50)
+        print "First index done!"
+        index_c = similarities.docsim.MatrixSimilarity(lda_c[self.c_question],
+                                                       num_best = self.num_edges), num_features = 50)
 
         print "Made similarity indexes!"
 
