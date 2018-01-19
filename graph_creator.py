@@ -30,7 +30,7 @@ class QA_Graph(object):
                                                         num_best = self.num_edges, num_features = 50)
         print "First index done!"
         index_c = similarities.docsim.MatrixSimilarity(lda_c[self.c_question],
-                                                       num_best = self.num_edges), num_features = 50)
+                                                       num_best = self.num_edges, num_features = 50)
 
         print "Made similarity indexes!"
 
