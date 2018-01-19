@@ -1,31 +1,38 @@
 import snap
 import gensim
 from gensim import models, similarities
-import pickle
-from stack_nextchange.graph_creator import QA_Graph
+import json
+from graph_creator import QA_Graph
 from time import time
+
+t = time()
 
 lda_nc = models.ldamulticore.LdaMulticore.load('lda_noncode')
 lda_c = models.ldamulticore.LdaMulticore.load('lda_code')
 
 print "Loaded LDA models! :)"
 
-with open('ncode_corp_dict.pkl', 'rb') as fnc:
-    noncode_pickle = pickle.load(fnc)
+with open('ncode_question_corp.json', 'rb') as fa:
+    nc_question = json.load(fa)
 
-with open('code_corp_dict.pkl', 'rb') as fc:
-    code_pickle = pickle.load(fc)
+with open('ncode_question_corp.json', 'rb') as fa:
+    nc_question = json.load(fa)
 
-corpus_nc = noncode_pickle[0]
-corpus_c = code_pickle[0]
+with open('ncode_question_corp.json', 'rb') as fa:
+    nc_question = json.load(fa)
 
-print "Loaded pickles! :)"
+with open('ncode_question_corp.json', 'rb') as fa:
+    nc_question = json.load(fa)
 
-qa_graph = QA_Graph(threshold = 0.1, corp_nc = corpus_nc, corp_c = corpus_c, start = 0, stop = 10000)
+print "Loaded jsons! :)"
 
-t = time()
+print time() - t
 
-qa_graph.make_graph(lda_nc, lda_c, notif_num = 50)
+qa_graph = QA_Graph(nc_question= nc_question, c_question = c_question,
+                    nc_answer = nc_answer, c_answer = c_answer, num_edges = 200)
+
+
+qa_graph.make_graph(lda_nc, lda_c, notif_num = 50, start = 0, stop = 1000)
 
 G = qa_graph.g
 
@@ -33,6 +40,6 @@ print "Made graph"
 
 print time() - t
 
-FOut = snap.TFOut("firstgraph.graph")
+FOut = snap.TFOut("graph_0_1000.graph")
 G.Save(FOut)
 FOut.Flush()
