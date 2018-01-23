@@ -7,12 +7,12 @@ from itertools import izip_longest
 class QA_Graph(object):
 
     def __init__(self, nc_question, c_question,
-                 nc_answer, c_answer, num_edges = 400, graph = None):
+                 nc_answer, c_answer, threshold = 0.7, graph = None):
         self.nc_question = nc_question
         self.c_question = c_question
         self.nc_answer = nc_answer
         self.c_answer = c_answer
-        self.num_edges = num_edges
+        self.threshold = self.threshold
 
         if graph == None:
             self.g = snap.TNGraph.New()
@@ -23,14 +23,14 @@ class QA_Graph(object):
         else:
             self.g = graph
 
-    def make_graph(self, lda_nc, lda_c, notif_num = 20000, start = 0, stop = 500000):
+    def make_graph(self, lda_nc, lda_c, notif_num = 40000, start = 0, stop = 568697):
         print "Starting to make indexes"
 
         index_nc = similarities.docsim.MatrixSimilarity(lda_nc[self.nc_question],
-                                                        num_best = self.num_edges, num_features = 50)
+                                                        num_best = 5000, num_features = 50)
         print "First index done!"
         index_c = similarities.docsim.MatrixSimilarity(lda_c[self.c_question],
-                                                       num_best = self.num_edges, num_features = 50)
+                                                       num_best = 5000, num_features = 50)
 
         print "Made similarity indexes!"
 
@@ -46,9 +46,9 @@ class QA_Graph(object):
             "Made queries and similarities"
 
             for non_code_sim, code_sim in izip_longest(sims_nc, sims_c, fillvalue=(None, 0)):
-                if non_code_sim[1] > 0 and node_a != non_code_sim[0]:
+                if non_code_sim[1] > self.threshold and non_code_sim[1] < 0.95:
                     self.g.AddEdge(node_a, non_code_sim[0])
-                if code_sim[1] > 0 and node_a != code_sim[0]:
+                if code_sim[1] > self.threshold and code_sim[1] < 0.9:
                     self.g.AddEdge(node_a, code_sim[0])
 
 
