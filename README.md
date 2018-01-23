@@ -11,3 +11,5 @@ The goal of this project is to explore how topics in SO are related in order.
 The dataset was obtained by querying the [Stack Data Exchange](https://data.stackexchange.com/) website for all questions with an accepted answer with a 'python' or related tag. The full T-SQL query used can be found under the query.sql file in this repo.
 
 The full dataset contained 568,697 question and answer pairs, which form the nodes of the large graph.
+
+## Methods
