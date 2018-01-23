@@ -14,7 +14,7 @@ The full dataset contained 568,697 question and answer pairs, which form the nod
 
 ## Methods
 
-The text in both question and answer body was split into "non-code" and "code" text (based on text that was placed into an html <code> tag). The non-code and code corpora were fed into gensim's multicore LDA model, with 50 topics and 2 passes each.
+The text in both question and answer body was split into "non-code" and "code" text (based on text that was placed into an html \<code\> tag). The non-code and code corpora were fed into gensim's multicore LDA model, with 50 topics and 2 passes each.
 
 From the topic distributions assessed by the LDA model, each node's answer was compared by cosine similarity to every other node's question, and the 400 best neighbors for each node became an edge. The graph creation algorithm selects the questions most likely to come from the same topic distribution as answers, giving a directionality to the relations.
 
