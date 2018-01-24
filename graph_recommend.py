@@ -8,12 +8,22 @@ import pandas as pd
 
 class Recommender(object):
 
-    def __init__(self, lda, dictionary, index):
+    def __init__(self, lda, dictionary, index, graph):
         self.lda = lda
         self.dict = dictionary
         self.index = index
         self.stop_words = get_stop_words('en')
         self.tokenizer = RegexpTokenizer(r'\w+')
+        self.g = graph
+        self.current_node = None
+
+    def traverse(self):
+        if self.current_node == None:
+            print "Have not chosen starting node!"
+        else:
+
+
+
 
     def make_bow(self, query):
         p_stemmer = PorterStemmer()
@@ -41,4 +51,6 @@ class Recommender(object):
 
         best_node = self.index[vec_lda][0]
 
-        return df.iloc[best_node[0]]
+        self.current_node = best_node[0]
+
+        print df.iloc[best_node[0]]
