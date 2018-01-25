@@ -32,11 +32,10 @@ class Recommender(object):
 
         tokens = self.tokenizer.tokenize(raw)
 
-        # remove stop words from tokens
+        # remove stop words and stem tokens
         stopped_tokens = [i for i in tokens if not i in self.stop_words]
-        # stem tokens
         stemmed_tokens = [p_stemmer.stem(i) for i in stopped_tokens]
-        # add tokens to list
+        # add tokens to document list
         bow_doc = self.dict.doc2bow(stemmed_tokens)
 
         return bow_doc
