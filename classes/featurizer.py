@@ -11,6 +11,9 @@ import gensim
 
 
 class Featurizer(object):
+    ''' Takes the cleaned and split data from the preprocessing and feeds it
+    into gensim's LDA model to create a feature matrix
+    '''
 
     def __init__(self, n_features = 100, start_column = 7, size = 30000):
         self.s = start_column
@@ -137,10 +140,12 @@ class Featurizer(object):
 
     def fit_lda(self, X):
 
+        # The columns come in as question non_code, question code, answer non_code, answer code
+        # First the non_code and code columns are appended together
         non_code_texts = np.concatenate((X[:,self.s], X[:, self.s+2]), axis = 0)
         code_texts = np.concatenate((X[:,self.s+1], X[:,self.s+3]), axis = 0)
 
-        #print(type(non_code_texts), len(non_code_texts))
+        # Then are fed into the LDA model
 
         self.dict_nc, self.corp_nc, self.lda_nc = self.make_lda(non_code_texts, is_code = False)
 

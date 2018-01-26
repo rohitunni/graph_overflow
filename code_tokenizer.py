@@ -1,6 +1,5 @@
 import re
 
-
 def code_tokenizer(input_string):
     # regex to extract object methods in python without including the object
     # name, except for common prefixes like np. and pd.

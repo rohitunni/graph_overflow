@@ -1,4 +1,4 @@
-# Graph Overflow
+# Graph Overflow: A Directed Graph of Python Stack Overflow Posts
 
 ## Overview
 

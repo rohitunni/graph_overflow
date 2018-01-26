@@ -21,7 +21,7 @@ class Recommender(object):
         if self.current_node == None:
             print "Have not chosen starting node!"
         else:
-
+            pass
 
 
 
