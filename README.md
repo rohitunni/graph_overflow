@@ -23,6 +23,12 @@ From the topic distributions assessed by the LDA model, each node's answer was c
 * nltk
 * snap.py (Stanford Network Analysis Project)
 
+# Visualizations:
+
+We can get idea of how the full graph looks by visualizing certain communities. Below is a picture of a subgraph induced on all nodes tagged with 'nltk', 1908 nodes and over 10,000 reciprocal edges.
+
+![nltk Community Subgraph](https://github.com/rohitunni/graph_overflow/blob/master/imgs/nltkgraph.png)
+
 ## Results
 
 ### Final Graph: 568,697 nodes and 227,147,087 edges
